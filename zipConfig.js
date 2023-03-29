@@ -53,7 +53,7 @@ archive.pipe(output);
 // archive.directory('subdir/', 'new-subdir');
 
 // append files from a sub-directory, putting its contents at the root of archive
-archive.directory("dist/", false);
+archive.directory("public/", false);
 
 // finalize the archive (ie we are done appending files but streams have to finish yet)
 // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
