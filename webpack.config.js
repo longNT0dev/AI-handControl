@@ -1,5 +1,6 @@
 const path = require("path");
-const WebpackObfuscator = require('webpack-obfuscator');
+const WebpackObfuscator = require("webpack-obfuscator");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./index.js",
@@ -8,6 +9,12 @@ module.exports = {
     filename: "index.bundle.js",
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "index.html"),
+      filename: "index.html",
+      chunks: ["index"],
+      cache: false,
+    }),
     new WebpackObfuscator(
       {
         rotateStringArray: true,
