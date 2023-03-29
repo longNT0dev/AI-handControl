@@ -9,12 +9,12 @@ module.exports = {
     filename: "index.bundle.js",
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "index.html"),
-      filename: "index.html",
-      chunks: ["index"],
-      cache: false,
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, "index.html"),
+    //   filename: "index.html",
+    //   chunks: ["index"],
+    //   cache: false,
+    // }),
     new WebpackObfuscator(
       {
         rotateStringArray: true,
