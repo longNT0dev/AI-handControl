@@ -135,6 +135,7 @@ const camera = new Camera(videoElement, {
     if (predictions.multiHandLandmarks) {
       // Get the landmarks for the first hand
       const landmarks = predictions.multiHandLandmarks[0];
+      console.log(landmarks)
 
       // Get the x and y coordinates for the index and middle fingers
       const indexFinger = landmarks[8];
