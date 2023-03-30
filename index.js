@@ -1,47 +1,93 @@
-const videoElement = document.getElementsByClassName("input_video")[0];
-const canvasElement = document.getElementsByClassName("output_canvas")[0];
-const canvasCtx = canvasElement.getContext("2d");
-
-function onResults(results) {
-  canvasCtx.save();
-  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-  canvasCtx.drawImage(
-    results.image,
-    0,
-    0,
-    canvasElement.width,
-    canvasElement.height
-  );
-  if (results.multiHandLandmarks) {
-    for (const landmarks of results.multiHandLandmarks) {
-      drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-        color: "#00FF00",
-        lineWidth: 5,
-      });
-      drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
-    }
-  }
-  canvasCtx.restore();
-}
-
-const hands = new Hands({
+// Create a new Holistic instance
+const holistic = new Holistic({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
   },
 });
-hands.setOptions({
-  maxNumHands: 2,
-  modelComplexity: 1,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5,
-});
-hands.onResults(onResults);
 
+const videoElement = document.getElementsByClassName("input_video")[0];
+
+
+// Create a variable to track the last detected gesture
+let lastGesture = null;
+
+// Start the camera and attach it to a video element
 const camera = new Camera(videoElement, {
   onFrame: async () => {
-    await hands.send({ image: videoElement });
+    // Run the Holistic model on the video frame
+    const predictions = await holistic.estimateHands(videoElement);
+
+    // Check if there are any hands detected
+    if (predictions.multiHandLandmarks) {
+      // Get the landmarks for the first hand
+      const landmarks = predictions.multiHandLandmarks[0];
+
+      // Get the x and y coordinates for the index and middle fingers
+      const indexFinger = landmarks[8];
+      const middleFinger = landmarks[12];
+      const xDiff = middleFinger.x - indexFinger.x;
+      const yDiff = middleFinger.y - indexFinger.y;
+
+      // Check if the fingers are close together horizontally
+      if (Math.abs(xDiff) < 20) {
+        // Check if the fingers are moving up or down
+        if (yDiff > 0 && lastGesture !== 'down') {
+          lastGesture = 'down';
+          console.log('User swiped down');
+        } else if (yDiff < 0 && lastGesture !== 'up') {
+          lastGesture = 'up';
+          console.log('User swiped up');
+        }
+      }
+    }
   },
-  width: 1280,
-  height: 720,
+  width: 640,
+  height: 480,
 });
+
+// Start the camera
 camera.start();
+
+// function onResults(results) {
+//   canvasCtx.save();
+//   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+//   canvasCtx.drawImage(
+//     results.image,
+//     0,
+//     0,
+//     canvasElement.width,
+//     canvasElement.height
+//   );
+//   if (results.multiHandLandmarks) {
+//     for (const landmarks of results.multiHandLandmarks) {
+//       drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+//         color: "#00FF00",
+//         lineWidth: 5,
+//       });
+//       drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
+//     }
+//   }
+//   canvasCtx.restore();
+// }
+
+// const hands = new Hands({
+//   locateFile: (file) => {
+//     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+//   },
+// });
+// hands.setOptions({
+//   maxNumHands: 2,
+//   modelComplexity: 1,
+//   minDetectionConfidence: 0.5,
+//   minTrackingConfidence: 0.5,
+// });
+// hands.onResults(onResults);
+
+// const camera = new Camera(videoElement, {
+//   onFrame: async () => {
+//     await hands.send({ image: videoElement });
+//   },
+//   width: 1280,
+//   height: 720,
+// });
+// camera.start();

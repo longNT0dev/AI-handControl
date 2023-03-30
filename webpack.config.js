@@ -1,6 +1,7 @@
 const path = require("path");
 const WebpackObfuscator = require("webpack-obfuscator");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: "./index.js",
@@ -14,6 +15,14 @@ module.exports = {
       filename: "index.html",
       chunks: ["index"],
       cache: false,
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "./manifest.json",
+          to: path.join(__dirname, "dist"),
+        },
+      ],
     }),
     new WebpackObfuscator(
       {
