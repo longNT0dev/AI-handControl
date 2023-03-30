@@ -24,12 +24,12 @@ module.exports = {
         },
       ],
     }),
-    new WebpackObfuscator(
-      {
-        rotateStringArray: true,
-      },
-      ["index.bundle.js"]
-    ),
+    // new WebpackObfuscator(
+    //   {
+    //     rotateStringArray: true,
+    //   },
+    //   ["index.bundle.js"]
+    // ),
   ],
   mode: "production",
 };
