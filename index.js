@@ -204,12 +204,14 @@ const camera = new Camera(videoElement, {
   onFrame: async () => {
     // await hands.send({image: videoElement});
 
-    const predictions = await hands.estimateHands(videoElement);
+    console.log(hands);
+
+    const results = await hands.process(videoElement);
 
     // Check if there are any hands detected
-    if (predictions.length > 0) {
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
       // Get the landmarks for the first hand
-      const landmarks = predictions[0].landmarks;
+      const landmarks = results.multiHandLandmarks[0];
 
       // Get the x and y coordinates for the index and middle fingers
       const indexFinger = landmarks[8];
